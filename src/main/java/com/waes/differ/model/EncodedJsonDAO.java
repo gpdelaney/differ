@@ -2,22 +2,21 @@ package com.waes.differ.model;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
- * DTO to persist the encoded json in the H2 database.
+ * DAO to persist the encoded json in the H2 database.
  * 
  * @author G. Delaney
  *
  */
 @Entity
-public class EncodedJsonDTO {
+public class EncodedJsonDAO {
 
-	public EncodedJsonDTO() {
+	public EncodedJsonDAO() {
 		super();
 	}
 
-	public EncodedJsonDTO(EncodedJsonIdentity encodedJsonIdentity, byte[] encodedJson) {
+	public EncodedJsonDAO(EncodedJsonIdentity encodedJsonIdentity, byte[] encodedJson) {
 		super();
 		this.encodedJson = encodedJson;
 		this.encodedJsonIdentity = encodedJsonIdentity;

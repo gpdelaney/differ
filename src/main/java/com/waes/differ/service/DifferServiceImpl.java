@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.waes.differ.model.EncodedJsonDTO;
+import com.waes.differ.model.EncodedJsonDAO;
 import com.waes.differ.model.EncodedJsonIdentity;
 import com.waes.differ.model.JsonPosition;
 import com.waes.differ.repository.EncodedJsonRepository;
@@ -16,23 +16,30 @@ public class DifferServiceImpl implements DifferService {
 	private EncodedJsonRepository jsonRepository;
 
 	public void saveLeftJson(String id, byte[] encodedJson) {
-		saveJson(new EncodedJsonDTO(new EncodedJsonIdentity(id, JsonPosition.LEFT), encodedJson));
+		saveJson(new EncodedJsonDAO(new EncodedJsonIdentity(id, JsonPosition.LEFT), encodedJson));
 	}
 
 	@Override
 	public void saveRightJson(String id, byte[] encodedJson) {
-		saveJson(new EncodedJsonDTO(new EncodedJsonIdentity(id, JsonPosition.RIGHT), encodedJson));
+		saveJson(new EncodedJsonDAO(new EncodedJsonIdentity(id, JsonPosition.RIGHT), encodedJson));
 	}
 
 	@Override
-	public void saveJson(EncodedJsonDTO encodedJson) {
+	public void saveJson(EncodedJsonDAO encodedJson) {
 		jsonRepository.save(encodedJson);
 	}
 
 	@Override
 	public String compareJson(String id) {
-		EncodedJsonDTO encodedJsonLeft = jsonRepository.getOne(new EncodedJsonIdentity(id, JsonPosition.LEFT));
-		EncodedJsonDTO encodedJsonRight = jsonRepository.getOne(new EncodedJsonIdentity(id, JsonPosition.RIGHT));
+		EncodedJsonDAO encodedJsonLeft = getJson(new EncodedJsonIdentity(id, JsonPosition.LEFT));
+		EncodedJsonDAO encodedJsonRight = getJson(new EncodedJsonIdentity(id, JsonPosition.RIGHT));
+		if (encodedJsonLeft != null && encodedJsonRight != null) {
+			return compareJsonInDetail(encodedJsonLeft, encodedJsonRight);
+		}
+		return null;
+	}
+
+	public String compareJsonInDetail(EncodedJsonDAO encodedJsonLeft, EncodedJsonDAO encodedJsonRight) {
 		if (!Arrays.equals(encodedJsonLeft.getEncodedJson(), encodedJsonRight.getEncodedJson())) {
 			if (encodedJsonLeft.getEncodedJson().length != encodedJsonRight.getEncodedJson().length) {
 				return "different length";
@@ -46,9 +53,13 @@ public class DifferServiceImpl implements DifferService {
 					}
 				}
 			}
-
 		}
 		return "the same";
+	}
+
+	@Override
+	public EncodedJsonDAO getJson(EncodedJsonIdentity encodedJson) {
+		return jsonRepository.getOne(encodedJson);
 	}
 
 }
