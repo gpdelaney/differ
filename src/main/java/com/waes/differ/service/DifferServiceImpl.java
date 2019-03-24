@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.waes.differ.model.EncodedJsonDAO;
 import com.waes.differ.model.EncodedJsonIdentity;
+import com.waes.differ.model.EncodedJsonResponseDTO;
 import com.waes.differ.model.JsonPosition;
 import com.waes.differ.repository.EncodedJsonRepository;
 
@@ -30,7 +31,7 @@ public class DifferServiceImpl implements DifferService {
 	}
 
 	@Override
-	public String compareJson(String id) {
+	public EncodedJsonResponseDTO compareJson(String id) {
 		EncodedJsonDAO encodedJsonLeft = getJson(new EncodedJsonIdentity(id, JsonPosition.LEFT));
 		EncodedJsonDAO encodedJsonRight = getJson(new EncodedJsonIdentity(id, JsonPosition.RIGHT));
 		if (encodedJsonLeft != null && encodedJsonRight != null) {
@@ -39,22 +40,25 @@ public class DifferServiceImpl implements DifferService {
 		return null;
 	}
 
-	public String compareJsonInDetail(EncodedJsonDAO encodedJsonLeft, EncodedJsonDAO encodedJsonRight) {
+	public EncodedJsonResponseDTO compareJsonInDetail(EncodedJsonDAO encodedJsonLeft, EncodedJsonDAO encodedJsonRight) {
+		EncodedJsonResponseDTO jsonResult = new EncodedJsonResponseDTO();
 		if (!Arrays.equals(encodedJsonLeft.getEncodedJson(), encodedJsonRight.getEncodedJson())) {
 			if (encodedJsonLeft.getEncodedJson().length != encodedJsonRight.getEncodedJson().length) {
-				return "different length";
+				jsonResult.setJsonOperationResult("Different Encoded Json Length");
 			} else {
 				byte[] leftArray = encodedJsonLeft.getEncodedJson();
 				byte[] rightArray = encodedJsonRight.getEncodedJson();
 				for (int i = 0; i < leftArray.length; i++) {
 					if (leftArray[i] != rightArray[i]) {
-						return "The different number is the last" + String.valueOf((rightArray.length - 1) - 1)
-								+ " characters from the right array";
+						jsonResult.setJsonOperationResult("Different! The offset is the last "
+								+ String.valueOf((rightArray.length - i) - 1) + " characters from the right array ");
 					}
 				}
 			}
+			return jsonResult;
 		}
-		return "the same";
+		jsonResult.setJsonOperationResult("the same");
+		return jsonResult;
 	}
 
 	@Override

@@ -15,21 +15,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.waes.differ.model.EncodedJsonDAO;
 import com.waes.differ.model.EncodedJsonIdentity;
+import com.waes.differ.model.EncodedJsonResponseDTO;
 import com.waes.differ.model.JsonPosition;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class DifferServiceImplTest {
-	
-    @TestConfiguration
-    static class DifferServiceImplTestContextConfiguration {
-  
-        @Bean
-        public DifferService employeeService() {
-            return new DifferServiceImpl();
-        }
-    }
-	
+
+	@TestConfiguration
+	static class DifferServiceImplTestContextConfiguration {
+
+		@Bean
+		public DifferService employeeService() {
+			return new DifferServiceImpl();
+		}
+	}
+
 	@Autowired
 	private DifferService differService;
 
@@ -40,59 +41,62 @@ public class DifferServiceImplTest {
 	public void whenValidId_thenLeftJsonShouldBeFound() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.LEFT),
 				Base64.getEncoder().encode("something".getBytes())));
-		EncodedJsonDAO encodedJsonDAO = differService.getJson(new EncodedJsonIdentity("1",JsonPosition.LEFT));
+		EncodedJsonDAO encodedJsonDAO = differService.getJson(new EncodedJsonIdentity("1", JsonPosition.LEFT));
 		assertThat(encodedJsonDAO.getEncodedJson()).isNotNull();
 	}
-	
+
 	@Test
 	public void whenValidId_thenRightJsonShouldBeFound() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.RIGHT),
 				Base64.getEncoder().encode("something".getBytes())));
-		EncodedJsonDAO encodedJsonDAO = differService.getJson(new EncodedJsonIdentity("1",JsonPosition.RIGHT));
+		EncodedJsonDAO encodedJsonDAO = differService.getJson(new EncodedJsonIdentity("1", JsonPosition.RIGHT));
 		assertThat(encodedJsonDAO.getEncodedJson()).isNotNull();
 	}
-	
+
 	@Test
 	public void WhenValidIdAndPayload_thenLeftJsonShouldPersist() {
-		differService.saveLeftJson("1",Base64.getEncoder().encode("something".getBytes()));
-		EncodedJsonDAO encodedJsonDAO = entityManager.find(EncodedJsonDAO.class, new EncodedJsonIdentity("1", JsonPosition.LEFT));
+		differService.saveLeftJson("1", Base64.getEncoder().encode("something".getBytes()));
+		EncodedJsonDAO encodedJsonDAO = entityManager.find(EncodedJsonDAO.class,
+				new EncodedJsonIdentity("1", JsonPosition.LEFT));
 		assertThat(encodedJsonDAO.getEncodedJson()).isNotNull();
 	}
-	
+
 	@Test
 	public void WhenValidIdAndPayload_thenRightJsonShouldPersist() {
-		differService.saveRightJson("1",Base64.getEncoder().encode("something".getBytes()));
-		EncodedJsonDAO encodedJsonDAO = entityManager.find(EncodedJsonDAO.class, new EncodedJsonIdentity("1", JsonPosition.RIGHT));
+		differService.saveRightJson("1", Base64.getEncoder().encode("something".getBytes()));
+		EncodedJsonDAO encodedJsonDAO = entityManager.find(EncodedJsonDAO.class,
+				new EncodedJsonIdentity("1", JsonPosition.RIGHT));
 		assertThat(encodedJsonDAO.getEncodedJson()).isNotNull();
 	}
-	
+
 	@Test
 	public void whenTwoJsonPersisted_compareBothAndAreTheSame() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.RIGHT),
 				Base64.getEncoder().encode("something".getBytes())));
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.LEFT),
 				Base64.getEncoder().encode("something".getBytes())));
-		String result = differService.compareJson("1");
-		assertThat(result).isEqualTo("the same");
+		EncodedJsonResponseDTO result = differService.compareJson("1");
+		assertThat(result.getJsonOperationResult()).isEqualTo("the same");
 	}
-	
+
 	@Test
 	public void whenTwoJsonPersisted_compareBothAndAreDifferentLength() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.RIGHT),
 				Base64.getEncoder().encode("something".getBytes())));
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.LEFT),
 				Base64.getEncoder().encode("same".getBytes())));
-		String result = differService.compareJson("1");
-		assertThat(result).isEqualTo("different length");
+		EncodedJsonResponseDTO result = differService.compareJson("1");
+		assertThat(result.getJsonOperationResult()).isEqualTo("Different Encoded Json Length");
 	}
-	
+
 	@Test
 	public void whenTwoJsonPersisted_compareBothAndArSameLengthButDifferent() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.RIGHT),
 				Base64.getEncoder().encode("something".getBytes())));
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.LEFT),
 				Base64.getEncoder().encode("sometheng".getBytes())));
-		String result = differService.compareJson("1");
-		assertThat(result).isEqualTo("The different number is the last10 characters from the right array");
+		EncodedJsonResponseDTO result = differService.compareJson("1");
+		assertThat(result.getJsonOperationResult())
+				.isEqualTo("Different! The offset is the last 3 characters from the right array ");
 	}
 }

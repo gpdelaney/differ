@@ -53,9 +53,9 @@ public class DifferControllerTest {
 		byte[] requestBodyLeft = Base64.getEncoder().encode("randomString".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
 		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
-		assertThat(response.getBody()).isEqualTo("the same");
+		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"the same\"}");
 	}
-	
+
 	@Test
 	public void compareJson_shouldBeDifferntLengths() {
 		String url = ("/v1/diff/1/right");
@@ -65,7 +65,7 @@ public class DifferControllerTest {
 		byte[] requestBodyLeft = Base64.getEncoder().encode("random".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
 		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
-		assertThat(response.getBody()).isEqualTo("different length");
+		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"Different Encoded Json Length\"}");
 	}
 
 }

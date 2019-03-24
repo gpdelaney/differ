@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.waes.differ.model.EncodedJsonResponseDTO;
 import com.waes.differ.service.DifferService;
 
 /**
@@ -55,13 +56,13 @@ class DifferController {
 	 * it will return a 404-Not Found.
 	 * 
 	 * @param comparedJson String - Id of the Json previously inserted to compare.
-	 * @return ResponseEntity - Will contain the result of the comparison and a
+	 * @return {@link EncodedJsonResponseDTO} - Will contain the result of the comparison and a
 	 *         Status Code 404 if not found.
 	 */
 	@GetMapping(path = "/v1/diff/{id}")
-	public ResponseEntity<String> getJsonComparison(@PathVariable(value = "id") String comparedJson) {
-		String comparisonResult = differService.compareJson(comparedJson);
+	public ResponseEntity<EncodedJsonResponseDTO> getJsonComparison(@PathVariable(value = "id") String comparedJson) {
+		EncodedJsonResponseDTO comparisonResult = differService.compareJson(comparedJson);
 		HttpStatus status = comparisonResult != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-		return new ResponseEntity<String>(comparisonResult, status);
+		return new ResponseEntity<EncodedJsonResponseDTO>(comparisonResult, status);
 	}
 }
