@@ -4,24 +4,24 @@ App that compares 2 encoded Json and returns if they are equal or not. First you
 
 Components
 ==========
-Spring Boot
-Gradle
-JPA
-H2DB (embedded)
+Spring Boot \n
+Gradle \n
+JPA \n
+H2DB (embedded)\n
 
 Instructions to run
 ===================
 
-Download Repo
+Download Repo\n
 ./gradlew bootRun
 
 Endpoints
 ===================
-leftJson:
-/v1/differ/{id}/left
-body: encodedJson
-rightJson:
-/v1/differ/{id}/right
-body: encodedJson
-compare:
-/v1/differ/{id}
+leftJson:\n
+/v1/differ/{id}/left\n
+body: encodedJson\n
+rightJson:\n
+/v1/differ/{id}/right\n
+body: encodedJson\n
+compare:\n
+/v1/differ/{id}\n
