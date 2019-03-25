@@ -95,7 +95,7 @@ PUT
 
 /v1/differ/header/{id}/left
 
-body: {encodedJson}
+header: encoded-json
 
 
 rightHeaderJson:
@@ -104,6 +104,6 @@ PUT
 
 /v1/differ/header/{id}/right
 
-body: {encodedJson}
+header: encoded-json
 
 
