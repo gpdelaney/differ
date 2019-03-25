@@ -91,4 +91,33 @@ class DifferController {
 		HttpStatus status = comparisonResult != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<EncodedJsonResponseDTO>(comparisonResult, status);
 	}
+	
+	/**
+	 * Utility method to directly decode jsons
+	 * @param encodedJson {@link EncodedJsonResponseDTO} 
+	 * @return ResponseEntity - With decoded json and httpstatus
+	 * 
+	 */
+	@GetMapping(path ="/v1/diff/decode/{encodedJson}")
+	@ResponseStatus(value = HttpStatus.OK)
+	public ResponseEntity<EncodedJsonResponseDTO> decodeJson(@PathVariable(value = "encodedJson") byte[] encodedJson) {
+		EncodedJsonResponseDTO decodedJson = differService.decodeJson(encodedJson);
+		HttpStatus status = decodedJson != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+		return new ResponseEntity<EncodedJsonResponseDTO>(decodedJson, status);
+	}
+	
+	/**
+	 * Utility method to directly encode jsons
+	 * @param encodedJson {@link EncodedJsonResponseDTO} 
+	 * @return ResponseEntity - With encoded json and httpstatus
+	 * 
+	 */
+	@GetMapping(path ="/v1/diff/encode/{plainJson}")
+	@ResponseStatus(value = HttpStatus.OK)
+	public ResponseEntity<EncodedJsonResponseDTO> encodeJson(@PathVariable(value="plainJson") String jsonToEncode) {
+		EncodedJsonResponseDTO decodedJson = new EncodedJsonResponseDTO(new String(differService.encodeJson(jsonToEncode)));
+		HttpStatus status = decodedJson != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+		return new ResponseEntity<EncodedJsonResponseDTO>(decodedJson, status);
+		
+	}
 }

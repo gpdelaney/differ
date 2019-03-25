@@ -80,8 +80,12 @@ public class DifferServiceImpl implements DifferService {
 		}
 
 	@Override
-	public String decodeJson(byte[] encodedJson) {
-		return new String(Base64.getDecoder().decode(encodedJson));
+	public EncodedJsonResponseDTO decodeJson(byte[] encodedJson) {
+		if(encodedJson != null) {
+			return new EncodedJsonResponseDTO(new String(Base64.getDecoder().decode(encodedJson)));
+		}else {
+			return null;
+		}
 	}
 
 	@Override

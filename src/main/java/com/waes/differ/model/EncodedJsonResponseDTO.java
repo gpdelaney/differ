@@ -6,6 +6,16 @@ package com.waes.differ.model;
  * @author will
  */
 public class EncodedJsonResponseDTO {
+	
+	public EncodedJsonResponseDTO(String jsonOperationResult) {
+		super();
+		this.jsonOperationResult = jsonOperationResult;
+	}
+	
+	public EncodedJsonResponseDTO() {
+		super();
+	}
+
 	private String jsonOperationResult;
 
 	public String getJsonOperationResult() {

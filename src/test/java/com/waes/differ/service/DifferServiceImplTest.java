@@ -103,7 +103,7 @@ public class DifferServiceImplTest {
 	@Test
 	public void encodeJson_andThenDecode() {
 		byte[] encodedJson = differService.encodeJson("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
-		String decodedJson = differService.decodeJson(encodedJson);
+		String decodedJson = differService.decodeJson(encodedJson).getJsonOperationResult();
 		assertThat(decodedJson).isEqualTo("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
 	}
 }

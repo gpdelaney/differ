@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.waes.differ.model.EncodedJsonResponseDTO;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DifferControllerTest {
@@ -52,8 +54,8 @@ public class DifferControllerTest {
 		String urlLeft = ("/v1/diff/1/left");
 		byte[] requestBodyLeft = Base64.getEncoder().encode("randomString".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
-		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
-		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"the same\"}");
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity("/v1/diff/1", EncodedJsonResponseDTO.class);
+		assertThat(response.getBody().getJsonOperationResult()).isEqualTo("the same");
 	}
 
 	@Test
@@ -64,8 +66,8 @@ public class DifferControllerTest {
 		String urlLeft = ("/v1/diff/1/left");
 		byte[] requestBodyLeft = Base64.getEncoder().encode("random".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
-		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
-		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"Different Encoded Json Length\"}");
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity("/v1/diff/1", EncodedJsonResponseDTO.class);
+		assertThat(response.getBody().getJsonOperationResult()).isEqualTo("Different Encoded Json Length");
 	}
 	
 	@Test
@@ -76,8 +78,8 @@ public class DifferControllerTest {
 		String urlLeft = ("/v1/diff/1/left");
 		byte[] requestBodyLeft = Base64.getEncoder().encode("randomStrong".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
-		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
-		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity("/v1/diff/1", EncodedJsonResponseDTO.class);
+		assertThat(response.getBody().getJsonOperationResult()).isEqualTo("Different! The offset is the last 2 characters from the right array ");
 	}
 	
 	@Test
@@ -85,9 +87,23 @@ public class DifferControllerTest {
 		String urlLeft = ("/v1/diff/4/left");
 		byte[] requestBodyLeft = Base64.getEncoder().encode("randomStrong".getBytes());
 		restTemplate.put(urlLeft, requestBodyLeft);
-		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/4", String.class);
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity("/v1/diff/4", EncodedJsonResponseDTO.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
-
-
+	
+	@Test
+	public void decodeJson_shoudlReturnStringDecoded() {
+		String url = ("/v1/diff/decode/{encodedJson}");
+		byte[] requestBody = Base64.getEncoder().encode("randomStrong".getBytes());
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity(url, EncodedJsonResponseDTO.class,new String(requestBody));
+		assertThat(response.getBody().getJsonOperationResult()).isEqualTo("randomStrong");
+	}
+	
+	@Test
+	public void decodeJson_shoudlReturnStringEncoded() {
+		String url = ("/v1/diff/encode/{plainJson}");
+		byte[] requestBody = Base64.getEncoder().encode("{\"json\":\"new Json!W\"}".getBytes());
+		ResponseEntity<EncodedJsonResponseDTO> response = restTemplate.getForEntity(url, EncodedJsonResponseDTO.class,"{\"json\":\"new Json!W\"}");
+		assertThat(response.getBody().getJsonOperationResult().getBytes()).isEqualTo(requestBody);
+	}
 }

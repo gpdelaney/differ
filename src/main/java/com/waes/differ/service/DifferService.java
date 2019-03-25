@@ -84,9 +84,9 @@ public interface DifferService {
 	 * Decode the Base64 Json
 	 * 
 	 * @param encodedJson byte[] - byte array of encoded json
-	 * @return String - The decoded Json
+	 * @return {@link EncodedJsonResponseDTO} - The decoded Json
 	 */
-	public String decodeJson(byte[] encodedJson);
+	public EncodedJsonResponseDTO decodeJson(byte[] encodedJson);
 
 	/**
 	 * Encode the Json in Base64
