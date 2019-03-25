@@ -89,7 +89,7 @@ body: {"example":"json"}
 
 Response -> {"jsonOperationResult":"asdasdqw=="}
 
-leftJson:
+leftHeaderJson:
 --------
 PUT
 
@@ -98,7 +98,7 @@ PUT
 body: {encodedJson}
 
 
-rightJson:
+rightHeaderJson:
 ----------
 PUT
 
