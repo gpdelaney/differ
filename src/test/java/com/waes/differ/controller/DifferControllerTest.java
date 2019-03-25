@@ -57,7 +57,7 @@ public class DifferControllerTest {
 	}
 
 	@Test
-	public void compareJson_shouldBeDifferntLengths() {
+	public void compareJson_shouldBeDifferentLengths() {
 		String url = ("/v1/diff/1/right");
 		byte[] requestBody = Base64.getEncoder().encode("randomString".getBytes());
 		restTemplate.put(url, requestBody);
@@ -67,5 +67,27 @@ public class DifferControllerTest {
 		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
 		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"Different Encoded Json Length\"}");
 	}
+	
+	@Test
+	public void compareJson_shouldBeDifferent() {
+		String url = ("/v1/diff/1/right");
+		byte[] requestBody = Base64.getEncoder().encode("randomString".getBytes());
+		restTemplate.put(url, requestBody);
+		String urlLeft = ("/v1/diff/1/left");
+		byte[] requestBodyLeft = Base64.getEncoder().encode("randomStrong".getBytes());
+		restTemplate.put(urlLeft, requestBodyLeft);
+		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/1", String.class);
+		assertThat(response.getBody()).isEqualTo("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
+	}
+	
+	@Test
+	public void compareJsonWithNull_shouldBe404() {
+		String urlLeft = ("/v1/diff/4/left");
+		byte[] requestBodyLeft = Base64.getEncoder().encode("randomStrong".getBytes());
+		restTemplate.put(urlLeft, requestBodyLeft);
+		ResponseEntity<String> response = restTemplate.getForEntity("/v1/diff/4", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+
 
 }

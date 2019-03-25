@@ -26,6 +26,32 @@ class DifferController {
 	private DifferService differService;
 
 	/**
+	 * Saves and encodes the encoded left json.
+	 * 
+	 * @param id            String - ID of the encoded json to be saved (if existing
+	 *                      it replaces the previous).
+	 * @param unencodedJson String - uncoded json.
+	 */
+	@PutMapping(path = "/v1/diff/json/{id}/left")
+	@ResponseStatus(value = HttpStatus.OK)
+	public void receivePlainJsonLeft(@PathVariable(value = "id") String id, @RequestBody String unencodedJson) {
+		differService.saveLeftUnencodedJson(id, unencodedJson);
+	}
+
+	/**
+	 * Saves and encodes the encoded right json.
+	 * 
+	 * @param id            String - ID of the encoded json to be saved (if existing
+	 *                      it replaces the previous).
+	 * @param unencodedJson String - String with the uncoded json.
+	 */
+	@PutMapping(path = "/v1/diff/json/{id}/right")
+	@ResponseStatus(value = HttpStatus.OK)
+	public void receivePlainJsonRight(@PathVariable(value = "id") String id, @RequestBody String unencodedJson) {
+		differService.saveRightUnencodedJson(id, unencodedJson);
+	}
+
+	/**
 	 * Saves the encoded left json.
 	 * 
 	 * @param id          String - ID of the encoded json to be saved (if existing
@@ -56,8 +82,8 @@ class DifferController {
 	 * it will return a 404-Not Found.
 	 * 
 	 * @param comparedJson String - Id of the Json previously inserted to compare.
-	 * @return {@link EncodedJsonResponseDTO} - Will contain the result of the comparison and a
-	 *         Status Code 404 if not found.
+	 * @return {@link EncodedJsonResponseDTO} - Will contain the result of the
+	 *         comparison and a Status Code 404 if not found.
 	 */
 	@GetMapping(path = "/v1/diff/{id}")
 	public ResponseEntity<EncodedJsonResponseDTO> getJsonComparison(@PathVariable(value = "id") String comparedJson) {

@@ -90,7 +90,7 @@ public class DifferServiceImplTest {
 	}
 
 	@Test
-	public void whenTwoJsonPersisted_compareBothAndArSameLengthButDifferent() {
+	public void whenTwoJsonPersisted_compareBothAndAreSameLengthButDifferent() {
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.RIGHT),
 				Base64.getEncoder().encode("something".getBytes())));
 		entityManager.persist(new EncodedJsonDAO(new EncodedJsonIdentity("1", JsonPosition.LEFT),
@@ -98,5 +98,12 @@ public class DifferServiceImplTest {
 		EncodedJsonResponseDTO result = differService.compareJson("1");
 		assertThat(result.getJsonOperationResult())
 				.isEqualTo("Different! The offset is the last 3 characters from the right array ");
+	}
+	
+	@Test
+	public void encodeJson_andThenDecode() {
+		byte[] encodedJson = differService.encodeJson("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
+		String decodedJson = differService.decodeJson(encodedJson);
+		assertThat(decodedJson).isEqualTo("{\"jsonOperationResult\":\"Different! The offset is the last 2 characters from the right array \"}");
 	}
 }

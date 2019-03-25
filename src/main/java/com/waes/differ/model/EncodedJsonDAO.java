@@ -3,6 +3,9 @@ package com.waes.differ.model;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 /**
  * DAO to persist the encoded json in the H2 database.
  * 

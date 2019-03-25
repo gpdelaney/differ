@@ -1,6 +1,7 @@
 package com.waes.differ.service;
 
 import java.util.Arrays;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,31 @@ public class DifferServiceImpl implements DifferService {
 
 	@Override
 	public EncodedJsonDAO getJson(EncodedJsonIdentity encodedJson) {
-		return jsonRepository.getOne(encodedJson);
+		return jsonRepository.findById(encodedJson).orElse(null);
 	}
+
+	@Override
+	public void saveLeftUnencodedJson(String id, String json) {
+		byte[] encodedJson = encodeJson(json);
+		saveJson(new EncodedJsonDAO(new EncodedJsonIdentity(id, JsonPosition.LEFT),encodedJson));
+	}
+
+	@Override
+	public void saveRightUnencodedJson(String id, String json) {
+		byte[] encodedJson = encodeJson(json);
+		saveJson(new EncodedJsonDAO(new EncodedJsonIdentity(id, JsonPosition.RIGHT),encodedJson));	
+		}
+
+	@Override
+	public String decodeJson(byte[] encodedJson) {
+		return new String(Base64.getDecoder().decode(encodedJson));
+	}
+
+	@Override
+	public byte[] encodeJson(String unencodedJson) {
+		return Base64.getEncoder().encode(unencodedJson.getBytes());
+	}
+	
+	
 
 }
